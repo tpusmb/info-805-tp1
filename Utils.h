@@ -5,6 +5,7 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <math.h>
 
 struct Vecteur {
     float xyz[3]; // les composantes
@@ -33,6 +34,24 @@ struct Vecteur {
         return Vecteur(std::max(xyz[0], other.xyz[0]), std::max(xyz[1], other.xyz[1]), std::max(xyz[2], other.xyz[2]));
     }
 
+    Vecteur normaliser(){
+        float norme = sqrt(xyz[0]*xyz[0] + xyz[1]*xyz[1] + xyz[2]*xyz[2]);
+        if (norme != 0){
+            float x = - xyz[0] / norme;
+            float y = - xyz[1] / norme;
+            float z = - xyz[2] / norme;
+            return Vecteur(x, y, z);
+        }
+        return Vecteur(xyz[0], xyz[1], xyz[2]);
+    }
+
+    Vecteur cross( const Vecteur& v ) const{
+        float x = xyz[1]*v.xyz[2] - xyz[2]*v.xyz[1];
+        float y = xyz[2]*v.xyz[0] - xyz[0]*v.xyz[2];
+        float z = xyz[0]*v.xyz[1] - xyz[1]*v.xyz[0];
+        return Vecteur(x, y, z);
+    }
+
     float operator[](int i) const {      // accesseur en lecture
         assert(i >= 0 || i <= 2);
         return xyz[i];
@@ -57,8 +76,11 @@ inline std::istream &operator>>(std::istream &in, Vecteur &v) {
 
 struct Triangle {
     Vecteur v1, v2, v3;
-
-    Triangle(Vecteur _v1, Vecteur _v2, Vecteur _v3) : v1(_v1), v2(_v2), v3(_v3) {
+    Triangle(Vecteur _v1, Vecteur _v2, Vecteur _v3) : v1(_v1), v2(_v2), v3(_v3) {}
+    Vecteur normal() const{
+        Vecteur ac = Vecteur(v3.xyz[0] - v1.xyz[0], v3.xyz[1] - v1.xyz[1], v3.xyz[2] - v1.xyz[2]);
+        Vecteur ab = Vecteur(v2.xyz[0] - v1.xyz[0], v2.xyz[1] - v1.xyz[1], v2.xyz[2] - v1.xyz[2]);
+        return ac.cross(ab).normaliser();
     }
 };
 

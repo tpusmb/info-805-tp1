@@ -5,23 +5,27 @@ using namespace std;
 
 // Draws a tetrahedron with 4 colors.
 void Viewer::draw() {
-    float colorBronzeDiff[4] = {0.8, 0.6, 0.0, 1.0};
-
-    // Draws triangles given by 3 vertices.
+    float colorBronzeDiff[4] = { 0.8, 0.6, 0.0, 1.0 };
+    float colorBronzeSpec[4] = { 1.0, 1.0, 0.4, 1.0 };
+    float colorNull      [4] = { 0.0, 0.0, 0.0, 1.0 };
+    // OpenGL met en place par défaut le modèle de Phong d'illumination.
     glBegin(GL_TRIANGLES);
+    glEnable(GL_COLOR_MATERIAL); // le materiau peut changer à chaque triangle.
+    // Si vous les écrivez là, ces couleurs/réglages seront partagés par tous
+    // les triangles.
     glColor4fv(colorBronzeDiff);
-
-    TriangleSoup iSoup;
-    ifstream input("tref.tri");
-    iSoup.read(input);
-    ptrSoup = &iSoup;
-    setWindowTitle("Viewer triangle soup");
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, colorBronzeDiff);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, colorBronzeSpec);
+    glMaterialf(GL_FRONT, GL_SHININESS, 20.0f );
 
     for (auto triangle : ptrSoup->triangles) {
+        Vecteur n = triangle.normal();
+        glNormal3f( n[ 0 ], n[ 1 ], n[ 2 ] );
         glVertex3f(triangle.v1[0], triangle.v1[1], triangle.v1[2]);
         glVertex3f(triangle.v2[0], triangle.v2[1], triangle.v2[2]);
         glVertex3f(triangle.v3[0], triangle.v3[1], triangle.v3[2]);
     }
+    glDisable(GL_COLOR_MATERIAL);
     glEnd();
 }
 
@@ -29,11 +33,6 @@ void Viewer::draw() {
 void Viewer::init() {
     // Restore previous viewer state.
     restoreStateFromFile();
-    TriangleSoup iSoup;
-    ifstream input("tref.tri");
-    iSoup.read(input);
-    ptrSoup = &iSoup;
-    setWindowTitle("Viewer triangle soup");
 
     Vecteur v1;
     Vecteur v2;

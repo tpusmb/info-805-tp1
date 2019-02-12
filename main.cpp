@@ -6,17 +6,22 @@
 #include "Viewer.h"
 
 using namespace std;
-int main(int argc, char** argv)
-{
-  // Read command lines arguments.
-  QApplication application(argc,argv);
-  // Instantiate the viewer.
-  Viewer viewer;
-  // Give a name
-  viewer.setWindowTitle("Viewer triangle soup");
-  // Make the viewer window visible on screen.
-  viewer.show();
-  // Run main loop.
-  application.exec();
-  return 0;
+
+int main(int argc, char **argv) {
+    // Read command lines arguments.
+    QApplication application(argc, argv);
+
+    TriangleSoup iSoup;
+    ifstream input("tref.tri");
+    iSoup.read(input);
+    input.close();
+    // Instantiate the viewer. le faire sous cette forme car le contructeur a ete redefini
+    Viewer viewer(&iSoup);
+    // Give a name
+    viewer.setWindowTitle("Viewer triangle soup");
+    // Make the viewer window visible on screen.
+    viewer.show();
+    // Run main loop.
+    application.exec();
+    return 0;
 }
