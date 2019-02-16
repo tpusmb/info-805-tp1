@@ -12,9 +12,11 @@ int main(int argc, char **argv) {
     QApplication application(argc, argv);
 
     TriangleSoup iSoup;
-    ifstream input("tref.tri");
+    TriangleSoup iSoupZip;
+    ifstream input(argv[1]);
     iSoup.read(input);
     input.close();
+    TriangleSoupZipper(iSoup, iSoupZip, Index(10, 10, 10));
     // Instantiate the viewer. le faire sous cette forme car le contructeur a ete redefini
     Viewer viewer(&iSoup);
     // Give a name
