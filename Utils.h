@@ -153,16 +153,16 @@ struct Index {
 
 struct TriangleSoupZipper {
     Vecteur low, up;
-    Index cellSize;
+    Vecteur cellSize;
     /// Construit le zipper avec une soupe de triangle en entrée \a
     /// anInput, une soupe de triangle en sortie \a anOutput, et un index \a size
     /// qui est le nombre de cellules de la boîte découpée selon les 3 directions.
     TriangleSoupZipper( const TriangleSoup& anInput, TriangleSoup& anOuput, Index size ) {
         anInput.boundingBox(low, up);
-        int sizeX = (up[0] - low[0]) / size[0];
-        int sizeY = (up[1] - low[1]) / size[1];
-        int sizeZ = (up[2] - low[2]) / size[2];
-        cellSize = Index(sizeX, sizeY, sizeZ);
+        int sizeX = static_cast<int>((up[0] - low[0]) / size[0]);
+        int sizeY = static_cast<int>((up[1] - low[1]) / size[1]);
+        int sizeZ = static_cast<int>((up[2] - low[2]) / size[2]);
+        cellSize = Vecteur(sizeX, sizeY, sizeZ);
         zip(anInput, anOuput);
     }
     /// @return l'index de la cellule dans laquelle tombe \a p.
@@ -174,9 +174,9 @@ struct TriangleSoupZipper {
     }
     /// @return le centroïde de la cellule d'index \a idx (son "centre").
     Vecteur centroid( const Index& idx ) const {
-        float x = ((idx[0] + 1) * cellSize[0]) * 0.5;
-        float y = ((idx[1] + 1) * cellSize[1]) * 0.5;
-        float z = ((idx[2] + 1) * cellSize[2]) * 0.5;
+        float x = idx[0] * cellSize[0] + low[0] + 0.5f;
+        float y = idx[1] * cellSize[1] + low[1] + 0.5f;
+        float z = idx[2] * cellSize[2] + low[2] + 0.5f;
         return Vecteur(x, y, z);
     }
     void zip(const TriangleSoup& anInput, TriangleSoup& anOutput) {
@@ -184,6 +184,11 @@ struct TriangleSoupZipper {
             Index indexA = index(triangle.v1);
             Index indexB = index(triangle.v2);
             Index indexC = index(triangle.v3);
+
+            /*index2data[indexA] = triangle.v1;
+            index2data[indexB] = triangle.v2;
+            index2data[indexC] = triangle.v3;*/
+
             if(!(indexA == indexB && indexA == indexC)){
                 anOutput.triangles.push_back(Triangle(centroid(indexA), centroid(indexB), centroid(indexC)));
             }
