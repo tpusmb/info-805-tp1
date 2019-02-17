@@ -161,9 +161,9 @@ struct TriangleSoupZipper {
         anInput.boundingBox(low, up);
         int sizeX = (up[0] - low[0]) / size[0];
         int sizeY = (up[1] - low[1]) / size[1];
-        int sizeZ = (up[2] - low[1]) / size[2];
+        int sizeZ = (up[2] - low[2]) / size[2];
         cellSize = Index(sizeX, sizeY, sizeZ);
-       zip(anInput, anOuput);
+        zip(anInput, anOuput);
     }
     /// @return l'index de la cellule dans laquelle tombe \a p.
     Index index( const Vecteur& p ) const {
@@ -179,11 +179,11 @@ struct TriangleSoupZipper {
         float z = ((idx[2] + 1) * cellSize[2]) * 0.5;
         return Vecteur(x, y, z);
     }
-    void zip(const TriangleSoup& anInput, TriangleSoup& anOutput){
+    void zip(const TriangleSoup& anInput, TriangleSoup& anOutput) {
         for (auto triangle : anInput.triangles){
-            Index indexA = Index(triangle.v1[0], triangle.v1[1], triangle.v1[2]);
-            Index indexB = Index(triangle.v2[0], triangle.v2[1], triangle.v2[2]);
-            Index indexC = Index(triangle.v3[0], triangle.v3[1], triangle.v3[2]);
+            Index indexA = index(triangle.v1);
+            Index indexB = index(triangle.v2);
+            Index indexC = index(triangle.v3);
             if(!(indexA == indexB && indexA == indexC)){
                 anOutput.triangles.push_back(Triangle(centroid(indexA), centroid(indexB), centroid(indexC)));
             }

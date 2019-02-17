@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     input.close();
     TriangleSoupZipper(iSoup, iSoupZip, Index(10, 10, 10));
     // Instantiate the viewer. le faire sous cette forme car le contructeur a ete redefini
-    Viewer viewer(&iSoup);
+    Viewer viewer(&iSoupZip);
     // Give a name
     viewer.setWindowTitle("Viewer triangle soup");
     // Make the viewer window visible on screen.
